@@ -5,3 +5,16 @@ SOEN 342 Project
 - **Azmi-Salah Bousedra** (ID: 40316065), Team Lead
 - **Tarek Al-Khen** (ID: 40272705)
 - **Gianluca Marino** (ID: 40297326)
+  
+## Critical Use Cases 
+-
+-
+-
+-
+-
+
+## Non-Critical Use Cases 
+-
+-
+-
+-
