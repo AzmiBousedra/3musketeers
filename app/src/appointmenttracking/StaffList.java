@@ -10,7 +10,7 @@ public class StaffList {
 		professionals.add(professional);
 	}
 	
-	public HealthcareProfessional findProfessional(int licenseNumber) {
+	public HealthcareProfessional findProfessionalByLicense(int licenseNumber) {
 		for (HealthcareProfessional professional : professionals) {
 			if (professional.getLicenseNumber()==licenseNumber) {
 				return professional;
