@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.List;
 // Controller Console in the class diagram
 public class Console {
 
@@ -70,7 +70,7 @@ public class Console {
 					if (professional == null) {
 
 						int licenseNumber = staffList.getProfessionals().size() + 1;
-						professional = new HealthcareProfessional(licenseNumber, firstName, lastName, false);
+						professional = new HealthcareProfessional(licenseNumber, firstName, lastName, false,specialty);
 						staffList.addProfessional(professional);
 						csvDetails.put(professional, new CsvDetails(firstName, lastName, title, specialty));
 					}
@@ -115,4 +115,14 @@ public class Console {
 		}
 		return null;
 	}
+  // UC-20 Search Availability
+public List<HealthcareProfessional> searchProfessionals(Specialty specialty,AvailabilityRange range) {
+
+    return staffList.findAvailableProfessionals(specialty,range);
+}
+
+public List<TimeSlot> getAvailableSlots(HealthcareProfessional hcp,AvailabilityRange range) {
+
+    return hcp.getAvailability().findAvailableSlots(range);
+}
 }
