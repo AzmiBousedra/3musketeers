@@ -18,6 +18,35 @@ public class StaffList {
 		}
 		return null;
 	}
+	
+	public List<HealthcareProfessional>findProfessionals(Specialty specialty){
+		List<HealthcareProfessional> matchingProfessionals = new ArrayList<>();
+		
+		for (HealthcareProfessional professional : professionals) {
+			
+			if (professional.getSpecialty().getName().equalsIgnoreCase(specialty.getName())){
+				matchingProfessionals.add(professional);
+			}
+		}
+		
+		return matchingProfessionals;
+	}
+	
+	public List<HealthcareProfessional> findAvailableProfessionals(
+	        Specialty specialty, AvailabilityRange range) {
+
+	    List<HealthcareProfessional> availableProfessionals = new ArrayList<>();
+
+	    for (HealthcareProfessional professional : findProfessionals(specialty)) {
+	        if (!professional.getAvailability().findAvailableSlots(range).isEmpty()) {
+	            availableProfessionals.add(professional);
+	        }
+	    }
+
+	    return availableProfessionals;
+	}
+	
+	
 	public List <HealthcareProfessional> getProfessionals(){
 		return professionals;
 	}
