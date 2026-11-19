@@ -19,6 +19,14 @@ SOEN 342 Project
 | UC-07 | Register Payment |
 | UC-08 | Issue Prescription |
 | UC-09 | Authenticate User |
+| UC-20 | Search Availability |
+| UC-21 | Create Availability |
+| UC-22 | Import Data from CSV |
+| UC-23 | Export Availabilities to CSV|
+| UC-24 | Add Patient to Waiting List |
+| UC-25 | Identify Eligible Waitlisted Patients |
+| UC-26 | Offer Appointment to Waitlisted Patient |
+| UC-29 | Allocate Resources |
 
 ## Non-Critical Use Cases
 
@@ -34,3 +42,5 @@ SOEN 342 Project
 | UC-17 | View Appointment History |
 | UC-18 | View Invoice |
 | UC-19 | Search Patient by Name |
+| UC-27 | Remove Patient from Waiting List |
+| UC-28 | Change Waiting List Priority |
