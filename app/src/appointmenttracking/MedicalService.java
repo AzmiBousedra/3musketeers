@@ -20,4 +20,12 @@ public class MedicalService {
     public int getServiceId() {
         return serviceId;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
 }

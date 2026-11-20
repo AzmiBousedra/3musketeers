@@ -41,6 +41,13 @@ public class Console {
 	private record CsvDetails(String firstName, String lastName, String title, Specialty specialty) {
 	}
 
+	public Console() {
+		// shortcut: fixed service catalogue, nothing loads services yet; import them once persistence lands (iteration III)
+		serviceList.addService(new MedicalService(1, "General consultation", 30, false));
+		serviceList.addService(new MedicalService(2, "Follow-up visit", 15, false));
+		serviceList.addService(new MedicalService(3, "Specialist consultation", 60, true));
+	}
+
 	public StaffList getStaffList() {
 		return staffList;
 	}
@@ -185,6 +192,21 @@ public class Console {
 	// UC-01 Book Appointment
 	public Patient searchPatient(String insuranceNumber) {
 		return patientList.findPatient(insuranceNumber);
+	}
+
+	// UC-05 Register Patient (extends UC-01 when the patient is not found)
+	public Patient registerPatient(String firstName, String lastName, LocalDate dateOfBirth, String phoneNumber,
+			String ramqNumber, String insuranceProvider, String insuranceNumber) {
+		if (firstName.isBlank() || lastName.isBlank()) {
+			throw new IllegalArgumentException("first and last name are required");
+		}
+		if (ramqNumber == null && insuranceNumber == null) {
+			throw new IllegalArgumentException("a RAMQ or insurance number is required");
+		}
+		Patient patient = new Patient("", firstName, lastName, dateOfBirth, phoneNumber, ramqNumber,
+				insuranceProvider, insuranceNumber);
+		patientList.addPatient(patient);
+		return patient;
 	}
 
 	public Patient selectPatient(String patientId) {

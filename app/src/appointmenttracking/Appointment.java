@@ -59,4 +59,11 @@ public class Appointment {
     public TimeSlot getSlot() {
         return slot;
     }
+
+    @Override
+    public String toString() {
+        return "#" + appointmentId + " " + patient.getFirstName() + " " + patient.getLastName()
+                + " with " + hcp.getFullName() + ", " + service.getName() + ", "
+                + slot.getDate() + " " + slot.getStartTime() + "-" + slot.getEndTime() + " (" + status + ")";
+    }
 }

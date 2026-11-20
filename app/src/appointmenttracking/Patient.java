@@ -56,4 +56,8 @@ public class Patient extends User {
         return insuranceNumber;
     }
 
+    public String getRamqNumber() {
+        return ramqNumber;
+    }
+
 }

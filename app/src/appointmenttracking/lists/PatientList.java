@@ -14,7 +14,9 @@ public class PatientList {
 
     public Patient findPatient(String insuranceNumber) {
         for (Patient patient : patients) {
-            if (patient.getInsuranceNumber() != null && patient.getInsuranceNumber().equals(insuranceNumber)) {
+            // a patient is identified by RAMQ or private insurance number (UC-01)
+            if (insuranceNumber.equalsIgnoreCase(patient.getInsuranceNumber())
+                    || insuranceNumber.equalsIgnoreCase(patient.getRamqNumber())) {
                 return patient;
             }
         }
