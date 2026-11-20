@@ -38,11 +38,30 @@ public class Main {
 			try {
 				switch (choice) {
 					case "1": { // UC-01 Book Appointment
-						System.out.print("Enter insurance number: ");
+						System.out.print("Enter RAMQ or insurance number: ");
 						Patient found = console.searchPatient(in.nextLine().trim());
 						if (found == null) {
-							System.out.println("Patient not found.");
-							break;
+							System.out.print("Patient not found. Register a new patient? (y/n): ");
+							if (!in.nextLine().trim().equalsIgnoreCase("y")) {
+								break;
+							}
+							System.out.print("First name: ");
+							String firstName = in.nextLine().trim();
+							System.out.print("Last name: ");
+							String lastName = in.nextLine().trim();
+							System.out.print("Date of birth (YYYY-MM-DD): ");
+							LocalDate dateOfBirth = LocalDate.parse(in.nextLine().trim());
+							System.out.print("Telephone: ");
+							String phone = in.nextLine().trim();
+							System.out.print("RAMQ number (blank if none): ");
+							String ramq = blankToNull(in.nextLine());
+							System.out.print("Insurance provider (blank if none): ");
+							String insuranceProvider = blankToNull(in.nextLine());
+							System.out.print("Insurance number (blank if none): ");
+							String insuranceNumber = blankToNull(in.nextLine());
+							found = console.registerPatient(firstName, lastName, dateOfBirth, phone, ramq,
+									insuranceProvider, insuranceNumber);
+							System.out.println("Patient registered.");
 						}
 						System.out.println("Patient found: ID=" + found.getId() + " (" + found.getFirstName() + " "
 								+ found.getLastName() + ")");
@@ -89,6 +108,11 @@ public class Main {
 						System.out.print("Select slot index: ");
 						TimeSlot timeSlot = slots.get(Integer.parseInt(in.nextLine().trim()));
 
+						System.out.println("Services:");
+						for (MedicalService s : console.getServiceList().getServices()) {
+							System.out.println("  " + s.getServiceId() + ". " + s.getName() + " (" + s.getDuration()
+									+ " min" + (s.requiresReferral() ? ", referral required" : "") + ")");
+						}
 						System.out.print("Enter service ID: ");
 						int serviceId = Integer.parseInt(in.nextLine().trim());
 						MedicalService medicalService = console.getServiceList().findService(serviceId);
@@ -251,7 +275,15 @@ public class Main {
 				System.out.println("Invalid input: " + e.getMessage());
 			} catch (DateTimeException e) {
 				System.out.println("Invalid date or time: " + e.getMessage());
+			} catch (IndexOutOfBoundsException e) {
+				System.out.println("Invalid selection: that number is not in the list.");
+			} catch (RuntimeException e) { // e.g. missing referral or slot already booked; keep the program running
+				System.out.println("Error: " + e.getMessage());
 			}
 		}
+	}
+
+	private static String blankToNull(String value) {
+		return value.isBlank() ? null : value.trim();
 	}
 }
