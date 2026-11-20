@@ -11,6 +11,9 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+
+import appointmenttracking.lists.*;
+
 // Controller Console in the class diagram
 public class Console {
 
@@ -18,10 +21,12 @@ public class Console {
 
 	private StaffList staffList = new StaffList();
 	private SpecialtyList specialtyList = new SpecialtyList();
-	// CSV details HealthcareProfessional doesn't hold (title, specialty, separate first/last name)
+	// CSV details HealthcareProfessional doesn't hold (title, specialty, separate
+	// first/last name)
 	private Map<HealthcareProfessional, CsvDetails> csvDetails = new HashMap<>();
 
-	private record CsvDetails(String firstName, String lastName, String title, Specialty specialty) {}
+	private record CsvDetails(String firstName, String lastName, String title, Specialty specialty) {
+	}
 
 	public StaffList getStaffList() {
 		return staffList;
@@ -40,9 +45,9 @@ public class Console {
 			while ((line = reader.readLine()) != null) {
 				lineNumber++;
 				if (lineNumber == 1 || line.isBlank()) {
-					continue; 
+					continue;
 				}
-				
+
 				String[] fields = line.split(",", -1);
 				if (fields.length != 7) {
 					System.out.println("Line " + lineNumber + " skipped: expected 7 columns, found " + fields.length);
@@ -51,6 +56,7 @@ public class Console {
 				try {
 					String firstName = fields[0].trim();
 					String lastName = fields[1].trim();
+					String password = ""; // the availability CSV has no password column
 					String title = fields[2].trim();
 					String specialtyName = fields[3].trim();
 					LocalDate date = LocalDate.parse(fields[4].trim());
@@ -70,7 +76,8 @@ public class Console {
 					if (professional == null) {
 
 						int licenseNumber = staffList.getProfessionals().size() + 1;
-						professional = new HealthcareProfessional(licenseNumber, firstName, lastName, false,specialty);
+						professional = new HealthcareProfessional(password, firstName, lastName, licenseNumber, false,
+								specialty);
 						staffList.addProfessional(professional);
 						csvDetails.put(professional, new CsvDetails(firstName, lastName, title, specialty));
 					}
@@ -115,14 +122,15 @@ public class Console {
 		}
 		return null;
 	}
-  // UC-20 Search Availability
-public List<HealthcareProfessional> searchProfessionals(Specialty specialty,AvailabilityRange range) {
 
-    return staffList.findAvailableProfessionals(specialty,range);
-}
+	// UC-20 Search Availability
+	public List<HealthcareProfessional> searchProfessionals(Specialty specialty, AvailabilityRange range) {
 
-public List<TimeSlot> getAvailableSlots(HealthcareProfessional hcp,AvailabilityRange range) {
+		return staffList.findAvailableProfessionals(specialty, range);
+	}
 
-    return hcp.getAvailability().findAvailableSlots(range);
-}
+	public List<TimeSlot> getAvailableSlots(HealthcareProfessional hcp, AvailabilityRange range) {
+
+		return hcp.getAvailability().findAvailableSlots(range);
+	}
 }
