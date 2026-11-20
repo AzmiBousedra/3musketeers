@@ -49,19 +49,19 @@ public class Console {
 				}
 
 				String[] fields = line.split(",", -1);
-				if (fields.length != 8) {
+				if (fields.length != 7) {
 					System.out.println("Line " + lineNumber + " skipped: expected 7 columns, found " + fields.length);
 					continue;
 				}
 				try {
 					String firstName = fields[0].trim();
 					String lastName = fields[1].trim();
-					String password = fields[2].trim();
-					String title = fields[3].trim();
-					String specialtyName = fields[4].trim();
-					LocalDate date = LocalDate.parse(fields[5].trim());
-					LocalTime start = LocalTime.parse(fields[6].trim());
-					LocalTime end = LocalTime.parse(fields[7].trim());
+					String password = ""; // the availability CSV has no password column
+					String title = fields[2].trim();
+					String specialtyName = fields[3].trim();
+					LocalDate date = LocalDate.parse(fields[4].trim());
+					LocalTime start = LocalTime.parse(fields[5].trim());
+					LocalTime end = LocalTime.parse(fields[6].trim());
 					if (firstName.isEmpty() || lastName.isEmpty() || !start.isBefore(end)) {
 						throw new IllegalArgumentException("missing name or start is not before end");
 					}
@@ -76,7 +76,7 @@ public class Console {
 					if (professional == null) {
 
 						int licenseNumber = staffList.getProfessionals().size() + 1;
-						professional = new HealthcareProfessional(firstName, lastName, password, licenseNumber, false,
+						professional = new HealthcareProfessional(password, firstName, lastName, licenseNumber, false,
 								specialty);
 						staffList.addProfessional(professional);
 						csvDetails.put(professional, new CsvDetails(firstName, lastName, title, specialty));
