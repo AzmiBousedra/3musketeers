@@ -1,11 +1,15 @@
 package appointmenttracking;
-
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.DayOfWeek;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -32,11 +36,96 @@ public class Main {
 
 			try {
 				switch (choice) {
-				case "1": // UC-01 Book Appointment 
-				case "2": // UC-20 Search Availability 
-				case "3": // UC-21 Create Availability 
+				case "1": // UC-01 Book Appointment
 					System.out.println("Not connected yet.");
-					break;
+				    break;
+				case "2":{ // UC-20 Search Availability 
+					System.out.print("Enter specialty: ");
+				    String specialtyName = in.nextLine().trim();
+
+				    System.out.print("Start date (YYYY-MM-DD): ");
+				    LocalDate startDate = LocalDate.parse(in.nextLine().trim());
+
+				    System.out.print("End date (YYYY-MM-DD): ");
+				    LocalDate endDate = LocalDate.parse(in.nextLine().trim());
+
+				    if (startDate.isAfter(endDate)) {
+				        System.out.println("Invalid date range.");
+				        break;
+				    }
+
+				    Specialty specialty = new Specialty(specialtyName);
+				    AvailabilityRange range = new AvailabilityRange(startDate, endDate);
+
+				    List<HealthcareProfessional> professionals =
+				            console.searchProfessionals(specialty, range);
+
+				    if (professionals.isEmpty()) {
+				        System.out.println("No available professionals found.");
+				        break;
+				    }
+				    
+				    for (HealthcareProfessional professional : professionals) {
+				        System.out.println(professional.getFullName()
+				                + " (License: " + professional.getLicenseNumber() + ")");
+
+				        for (TimeSlot slot : console.getAvailableSlots(professional, range)) {
+				            System.out.println("  " + slot.getDate() + " "
+				                    + slot.getStartTime() + " - " + slot.getEndTime());
+				        }
+				    }
+				    break;
+				}
+					
+				case "3":{ // UC-21 Create Availability 
+					
+					if (console.getStaffList().getProfessionals().isEmpty()) {
+					    System.out.println("No healthcare professionals found.Please Import CSV first");
+					    break;
+					}
+					System.out.println("Healthcare Professionals:");
+
+					for (HealthcareProfessional p : console.getStaffList().getProfessionals()) {
+					    System.out.println(p.getLicenseNumber() + ". " + p.getFullName()
+					            + " (" + p.getSpecialty().getName() + ")");
+					}
+					System.out.print("Enter professional license number: ");
+				    int licenseNumber = Integer.parseInt(in.nextLine().trim());
+
+				    HealthcareProfessional professional =
+				            console.getStaffList().findProfessionalByLicense(licenseNumber);
+
+				    if (professional == null) {
+				        System.out.println("Professional not found.");
+				        break;
+				    }
+
+				    System.out.print("Start date (YYYY-MM-DD): ");
+				    LocalDate startDate = LocalDate.parse(in.nextLine().trim());
+
+				    System.out.print("End date (YYYY-MM-DD): ");
+				    LocalDate endDate = LocalDate.parse(in.nextLine().trim());
+
+				    System.out.print("Weekdays (ex: TUESDAY,WEDNESDAY): ");
+				    String[] days = in.nextLine().split(",");
+
+				    List<DayOfWeek> selectedDays = new ArrayList<>();
+				    for (String day : days) {
+				        selectedDays.add(DayOfWeek.valueOf(day.trim().toUpperCase()));
+				    }
+
+				    System.out.print("Start time (ex: 09:00): ");
+				    LocalTime startTime = LocalTime.parse(in.nextLine().trim());
+
+				    System.out.print("End time (ex: 12:00): ");
+				    LocalTime endTime = LocalTime.parse(in.nextLine().trim());
+
+				    professional.getAvailability().createAvailability(
+				            startDate, endDate, selectedDays, startTime, endTime);
+
+				    System.out.println("Availability created successfully.");
+				    break;
+				}
 				case "4": { // UC-22 Import Data from CSV 
 					List<Path> files;
 					try (Stream<Path> listing = Files.list(Path.of(DATA_DIR))) {
@@ -96,6 +185,12 @@ public class Main {
 				}
 			} catch (IOException e) {
 				System.out.println("File error (" + e.getClass().getSimpleName() + "): " + e.getMessage());
+			}
+			catch (IllegalArgumentException e) {
+			    System.out.println("Invalid input: " + e.getMessage());
+			}
+			catch (DateTimeException e) {
+			    System.out.println("Invalid date or time: " + e.getMessage());
 			}
 		}
 	}
