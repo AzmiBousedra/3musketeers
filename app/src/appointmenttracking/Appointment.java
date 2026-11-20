@@ -5,6 +5,8 @@ import java.time.LocalTime;
 import appointmenttracking.types.AppointmentStatus;
 
 public class Appointment {
+    private static int nextId = 1; // Could be implemented better
+
     private int appointmentId;
     private AppointmentStatus status;
     private LocalTime arrivalTime;
@@ -14,6 +16,7 @@ public class Appointment {
     private TimeSlot slot;
 
     public Appointment(Patient patient, HealthcareProfessional hcp, MedicalService service, TimeSlot slot) {
+        this.appointmentId = nextId++;
         this.patient = patient;
         this.hcp = hcp;
         this.service = service;
@@ -29,7 +32,31 @@ public class Appointment {
         this.arrivalTime = arrivalTime;
     }
 
+    public int getAppointmentId() {
+        return appointmentId;
+    }
+
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public LocalTime getArrivalTime() {
+        return arrivalTime;
+    }
+
     public Patient getPatient() {
         return patient;
+    }
+
+    public HealthcareProfessional getHcp() {
+        return hcp;
+    }
+
+    public MedicalService getService() {
+        return service;
+    }
+
+    public TimeSlot getSlot() {
+        return slot;
     }
 }
