@@ -55,10 +55,9 @@ public class Main {
 				    }
 
 				    Specialty specialty = new Specialty(specialtyName);
-				    AvailabilityRange range = new AvailabilityRange(startDate, endDate);
+				    AvailabilityRange range = new AvailabilityRange(startDate,endDate);
 
-				    List<HealthcareProfessional> professionals =
-				            console.searchProfessionals(specialty, range);
+				    List<HealthcareProfessional> professionals = console.searchProfessionals(specialty, range);
 
 				    if (professionals.isEmpty()) {
 				        System.out.println("No available professionals found.");
@@ -66,12 +65,10 @@ public class Main {
 				    }
 				    
 				    for (HealthcareProfessional professional : professionals) {
-				        System.out.println(professional.getFullName()
-				                + " (License: " + professional.getLicenseNumber() + ")");
+				        System.out.println(professional.getFullName() + " (License: " + professional.getLicenseNumber() + ")");
 
-				        for (TimeSlot slot : console.getAvailableSlots(professional, range)) {
-				            System.out.println("  " + slot.getDate() + " "
-				                    + slot.getStartTime() + " - " + slot.getEndTime());
+				        for (TimeSlot slot : console.getAvailableSlots(professional,range)) {
+				            System.out.println("  " + slot.getDate() + " " + slot.getStartTime() + " - " + slot.getEndTime());
 				        }
 				    }
 				    break;
@@ -86,14 +83,12 @@ public class Main {
 					System.out.println("Healthcare Professionals:");
 
 					for (HealthcareProfessional p : console.getStaffList().getProfessionals()) {
-					    System.out.println(p.getLicenseNumber() + ". " + p.getFullName()
-					            + " (" + p.getSpecialty().getName() + ")");
+					    System.out.println(p.getLicenseNumber() + ". " + p.getFullName()   + " (" + p.getSpecialty().getName() + ")");
 					}
 					System.out.print("Enter professional license number: ");
 				    int licenseNumber = Integer.parseInt(in.nextLine().trim());
 
-				    HealthcareProfessional professional =
-				            console.getStaffList().findProfessionalByLicense(licenseNumber);
+				    HealthcareProfessional professional = console.getStaffList().findProfessionalByLicense(licenseNumber);
 
 				    if (professional == null) {
 				        System.out.println("Professional not found.");
@@ -120,8 +115,7 @@ public class Main {
 				    System.out.print("End time (ex: 12:00): ");
 				    LocalTime endTime = LocalTime.parse(in.nextLine().trim());
 
-				    professional.getAvailability().createAvailability(
-				            startDate, endDate, selectedDays, startTime, endTime);
+				    professional.getAvailability().createAvailability(startDate,endDate,selectedDays,startTime,endTime);
 
 				    System.out.println("Availability created successfully.");
 				    break;
