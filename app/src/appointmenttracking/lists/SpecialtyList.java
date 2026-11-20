@@ -1,6 +1,9 @@
-package appointmenttracking;
+package appointmenttracking.lists;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import appointmenttracking.Specialty;
 
 public class SpecialtyList {
 
