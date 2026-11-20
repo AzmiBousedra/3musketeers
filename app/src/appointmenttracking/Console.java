@@ -6,8 +6,10 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -19,8 +21,19 @@ public class Console {
 
 	static final String CSV_HEADER = "First Name,Last Name,Title,Specialty,Date,Start,End";
 
+	private User currentUser;
+	private PatientList patientList = new PatientList();
 	private StaffList staffList = new StaffList();
+	private ReferralList referralList = new ReferralList();
+	private AppointmentList appointmentList = new AppointmentList();
 	private SpecialtyList specialtyList = new SpecialtyList();
+	private ServiceList serviceList = new ServiceList();
+	private MedicationList medicationList = new MedicationList();
+	private Patient selectedPatient;
+	private Invoice selectedInvoice;
+	private Consultation selectedConsultation;
+	private Prescription draftPrescription;
+
 	// CSV details HealthcareProfessional doesn't hold (title, specialty, separate
 	// first/last name)
 	private Map<HealthcareProfessional, CsvDetails> csvDetails = new HashMap<>();
@@ -34,6 +47,41 @@ public class Console {
 
 	public SpecialtyList getSpecialtyList() {
 		return specialtyList;
+	}
+
+	public ServiceList getServiceList() {
+		return serviceList;
+	}
+
+	// Login
+	public User login(int id, String password) {
+		User user = findUserById(id);
+		if (user == null || password == null || user.getPassword() == null || user.getPassword().isEmpty()
+				|| !password.equals(user.getPassword())) {
+			throw new IllegalArgumentException("invalid id or password");
+		}
+		currentUser = user;
+		clearSelection();
+		return user;
+	}
+
+	private User findUserById(int id) {
+		Patient patient = patientList.findPatientById(id);
+		if (patient != null) {
+			return patient;
+		}
+		AdministrativeStaff admin = staffList.findStaff(id);
+		if (admin != null) {
+			return admin;
+		}
+		return staffList.findProfessionalById(id);
+	}
+
+	private void clearSelection() {
+		selectedPatient = null;
+		selectedInvoice = null;
+		selectedConsultation = null;
+		draftPrescription = null;
 	}
 
 	// UC-22 Import Data from CSV
@@ -132,5 +180,34 @@ public class Console {
 	public List<TimeSlot> getAvailableSlots(HealthcareProfessional hcp, AvailabilityRange range) {
 
 		return hcp.getAvailability().findAvailableSlots(range);
+	}
+
+	// UC-01 Book Appointment
+	public Patient searchPatient(String insuranceNumber) {
+		return patientList.findPatient(insuranceNumber);
+	}
+
+	public Patient selectPatient(String patientId) {
+		int id = Integer.parseInt(patientId.trim());
+		for (Patient p : patientList.getPatients()) {
+			if (p.getId() == id) {
+				return p;
+			}
+		}
+		return null;
+	}
+
+	public Appointment requestAppointment(Patient patient, HealthcareProfessional hcp,
+			MedicalService medicalService, TimeSlot timeSlot) {
+		if (medicalService.requiresReferral()) {
+			Referral referral = referralList.findReferral(patient, hcp, medicalService);
+			if (referral == null) {
+				throw new IllegalStateException("Referral needed but missing.");
+			}
+		}
+		if (!timeSlot.isAvailable()) {
+			throw new IllegalStateException("Time slot is no longer available.");
+		}
+		return appointmentList.createAppointment(patient, hcp, medicalService, timeSlot);
 	}
 }

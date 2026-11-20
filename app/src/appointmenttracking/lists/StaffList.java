@@ -57,6 +57,24 @@ public class StaffList {
 		return availableProfessionals;
 	}
 
+	public HealthcareProfessional findProfessionalById(int id) {
+		for (HealthcareProfessional professional : professionals) {
+			if (professional.getId() == id) {
+				return professional;
+			}
+		}
+		return null;
+	}
+
+	public AdministrativeStaff findStaff(int id) {
+		for (AdministrativeStaff staffMember : staff) {
+			if (staffMember.getId() == id) {
+				return staffMember;
+			}
+		}
+		return null;
+	}
+
 	public List<HealthcareProfessional> getProfessionals() {
 		return professionals;
 	}
